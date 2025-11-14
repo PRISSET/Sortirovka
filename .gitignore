@@ -1,0 +1,11 @@
+.env
+verified.csv
+called.csv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
