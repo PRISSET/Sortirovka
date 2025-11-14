@@ -8,6 +8,7 @@ from aiogram.filters import Command
 
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
+ADMIN_ID = int(os.getenv('ADMIN_ID')) if os.getenv('ADMIN_ID') else None
 
 class ContactBot:
     def __init__(self):
@@ -55,6 +56,9 @@ class ContactBot:
 bot_instance = ContactBot()
 
 async def start_handler(message: types.Message):
+    if ADMIN_ID is not None and message.from_user.id != ADMIN_ID:
+        await message.reply("Нет доступа")
+        return
     await show_next_contact(message)
 
 async def show_next_contact(message: types.Message):
@@ -83,6 +87,8 @@ async def show_next_contact(message: types.Message):
 
 async def button_callback(callback_query: types.CallbackQuery):
     await callback_query.answer()
+    if ADMIN_ID is not None and callback_query.from_user.id != ADMIN_ID:
+        return
     
     contact = bot_instance.get_current_contact()
     if not contact:
@@ -130,9 +136,15 @@ async def show_next_contact_callback(callback_query: types.CallbackQuery):
     )
 
 async def next_contact_handler(message: types.Message):
+    if ADMIN_ID is not None and message.from_user.id != ADMIN_ID:
+        await message.reply("Нет доступа")
+        return
     await show_next_contact(message)
 
 async def reload_base_handler(message: types.Message):
+    if ADMIN_ID is not None and message.from_user.id != ADMIN_ID:
+        await message.reply("Нет доступа")
+        return
     bot_instance.load_contacts()
     bot_instance.current_index = 0
     await message.reply(f"База перезагружена. Контактов: {len(bot_instance.contacts)}")
